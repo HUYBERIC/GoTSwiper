@@ -19,42 +19,42 @@ const images = document.querySelectorAll(".img");
 
 // F O N C T I O N S
 
-images.forEach((image, index) => {
-    image.addEventListener('click', () => {
-        // Aller au slide correspondant
-        swiper.slideTo(index);
-        // Mettre à jour les classes des images
-        images.forEach(img => {
-            img.classList.remove('active');
-            img.classList.add('overlay');
+function updateImageClasses(activeIndex) {
+    images.forEach((img, index) => {
 
-            const existingFilterDiv = img.querySelector('.filter');
+        img.classList.remove('active');
+        img.classList.add('overlay');
 
+        let existingFilterDiv = img.querySelector('.filter');
+        if (!existingFilterDiv) {
+            existingFilterDiv = document.createElement("div");
+            existingFilterDiv.classList.add("filter");
+            img.appendChild(existingFilterDiv);
+        }
+
+        if (index === activeIndex) {
+            img.classList.remove('overlay');
+            img.classList.add('active');
             if (existingFilterDiv) {
                 existingFilterDiv.remove();
             }
-
-            const filterDiv = document.createElement("div");
-            filterDiv.classList.add("filter");
-            img.appendChild(filterDiv);
-        });
-        image.classList.add('active');
-        image.classList.remove('overlay');
-        if (image.classList.contains('active')) {
-            const activeFilterDiv = image.querySelector('.filter');
-            if (activeFilterDiv) {
-                activeFilterDiv.remove();
-            }
         }
+    });
+}
+
+updateImageClasses(0);
+
+images.forEach((image, index) => {
+    image.addEventListener('click', () => {
+
+        swiper.slideTo(index);
+
+        updateImageClasses(index);
     });
 });
 
+
 swiper.on('slideChange', () => {
     const currentIndex = swiper.realIndex;
-    images.forEach(img => {
-        img.classList.remove('active');
-        img.classList.add('overlay');
-    });
-    images[currentIndex].classList.add('active');
-    images[currentIndex].classList.remove('overlay');
+    updateImageClasses(currentIndex);
 });
